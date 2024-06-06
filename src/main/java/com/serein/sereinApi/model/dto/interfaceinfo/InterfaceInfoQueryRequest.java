@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * 查询请求
  *
+ * @author cao32
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

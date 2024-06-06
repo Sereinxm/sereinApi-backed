@@ -3,17 +3,16 @@ package com.serein.sereinApi.common;
 /**
  * 返回工具类
  *
- * @author <a href="https://github.com/liserein">程序员鱼皮</a>
- * @from <a href="https://serein.icu">编程导航知识星球</a>
+ * @author cao32
  */
 public class ResultUtils {
 
     /**
      * 成功
      *
-     * @param data
-     * @param <T>
-     * @return
+     * @param data 数据
+     * @param <T>  泛型
+     * @return  泛型
      */
     public static <T> BaseResponse<T> success(T data) {
         return new BaseResponse<>(0, data, "ok");
@@ -22,7 +21,7 @@ public class ResultUtils {
     /**
      * 失败
      *
-     * @param errorCode
+     * @param errorCode 错误码
      * @return
      */
     public static BaseResponse error(ErrorCode errorCode) {
