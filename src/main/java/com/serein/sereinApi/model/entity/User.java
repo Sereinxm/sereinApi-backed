@@ -54,6 +54,8 @@ public class User implements Serializable {
      * 用户头像
      */
     private String userAvatar;
+    private String accessKey;
+    private String secretKey;
 
     /**
      * 用户简介
