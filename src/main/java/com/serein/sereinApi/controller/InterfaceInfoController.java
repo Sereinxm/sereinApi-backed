@@ -3,10 +3,7 @@ package com.serein.sereinApi.controller;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.serein.sereinApi.annotation.AuthCheck;
-import com.serein.sereinApi.common.BaseResponse;
-import com.serein.sereinApi.common.DeleteRequest;
-import com.serein.sereinApi.common.ErrorCode;
-import com.serein.sereinApi.common.ResultUtils;
+import com.serein.sereinApi.common.*;
 import com.serein.sereinApi.constant.UserConstant;
 import com.serein.sereinApi.exception.BusinessException;
 import com.serein.sereinApi.exception.ThrowUtils;
@@ -17,6 +14,7 @@ import com.serein.sereinApi.model.dto.interfaceinfo.InterfaceInfoUpdateRequest;
 import com.serein.sereinApi.model.entity.InterfaceInfo;
 import com.serein.sereinApi.model.entity.User;
 
+import com.serein.sereinApi.model.enums.InterfaceInfoStatusEnum;
 import com.serein.sereinApi.model.vo.InterfaceInfoVO;
 import com.serein.sereinApi.service.InterfaceInfoService;
 import com.serein.sereinApi.service.UserService;
@@ -28,6 +26,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+/**
+ * 接口管理
+ * @author cao32
+ */
 @RestController
 @RequestMapping("/interface")
 @Slf4j
@@ -144,6 +146,51 @@ public class InterfaceInfoController {
                 interfaceInfoService.getQueryWrapper(interfaceInfoQueryRequest));
         return ResultUtils.success(interfaceInfoPage);
     }
-
+    /**
+     * 发布接口（仅管理员）
+     *
+     * @param idRequest 发布入参
+     * @return Response
+     */
+    @PostMapping("/online")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> onlineInterfaceInfo(@RequestBody IdRequest idRequest,HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        //校验接口是否存在
+        Long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        //判断接口是否可以调用
+        //修改接口状态
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.ONLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
+    @PostMapping("/offline")
+    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    public BaseResponse<Boolean> offlineInterfaceInfo(@RequestBody IdRequest idRequest,HttpServletRequest request) {
+        if (idRequest == null || idRequest.getId() <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        //校验接口是否存在
+        Long id = idRequest.getId();
+        InterfaceInfo oldInterfaceInfo = interfaceInfoService.getById(id);
+        if (oldInterfaceInfo == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        //判断接口是否可以调用
+        //修改接口状态
+        InterfaceInfo interfaceInfo = new InterfaceInfo();
+        interfaceInfo.setId(id);
+        interfaceInfo.setStatus(InterfaceInfoStatusEnum.OFFLINE.getValue());
+        boolean result = interfaceInfoService.updateById(interfaceInfo);
+        return ResultUtils.success(result);
+    }
 
 }
